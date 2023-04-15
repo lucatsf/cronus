@@ -17,7 +17,7 @@ export class CreateUsuarioDto {
 
   @IsNotEmpty()
   @IsString()
-  @Matches(RegexHelper.senha)
+  @Matches(RegexHelper.senha, { message: 'A senha deve conter letras maiúsculas, minúsculas, números e caracteres especiais' })
   @ApiProperty()
   senha: string;
 
