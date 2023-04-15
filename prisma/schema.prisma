@@ -8,11 +8,23 @@ datasource db {
 }
 
 model Empresa {
-  id       Int    @id @default(autoincrement())
+  id       Int       @id @default(autoincrement())
   nome     String
-  cnpj     String @unique
+  cnpj     String    @unique
   telefone String
   email    String
+  Usuario  Usuario[]
 
   @@map("empresas")
+}
+
+model Usuario {
+  id        Int     @id @default(autoincrement())
+  nome      String
+  email     String  @unique
+  senha     String
+  empresa   Empresa? @relation(fields: [empresaId], references: [id])
+  empresaId Int?
+
+  @@map("usuarios")
 }
