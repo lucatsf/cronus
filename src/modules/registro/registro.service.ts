@@ -110,14 +110,27 @@ export class RegistroService {
   }
 
   async findOne(id: number) {
-    return `This action returns a #${id} registro`;
+    return this.prisma.registro.findUnique({
+      where: {
+        id,
+      },
+    });
   }
 
   async update(id: number, data: UpdateRegistroDto) {
-    return `This action updates a #${id} registro`;
+    return this.prisma.registro.update({
+      where: {
+        id,
+      },
+      data,
+    });
   }
 
   async remove(id: number) {
-    return `This action removes a #${id} registro`;
+    return this.prisma.registro.delete({
+      where: {
+        id,
+      },
+    });
   }
 }
