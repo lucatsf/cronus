@@ -5,6 +5,7 @@ export class Usuario {
   nome: string;
   email: string;
   senha: string;
+  perfil?: string;
   empresaId?: number;
   empresa?: Empresa;
 }

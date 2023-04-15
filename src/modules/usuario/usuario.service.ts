@@ -8,18 +8,20 @@ import { hash } from 'bcrypt';
 export class UsuarioService {
   constructor(private prisma: PrismaService) {}
   async create(data: CreateUsuarioDto) {
-    const { nome, email, senha } = data;
+    const { nome, email, senha , perfil} = data;
     const hashPassword = await hash(senha, 10);
     const user = await this.prisma.usuario.create({
       data: {
         nome,
         email,
         senha: hashPassword,
+        perfil,
       },
     });
     return {
       nome: user.nome,
       email: user.email,
+      perfil: user.perfil,
     };
   }
 
@@ -48,6 +50,7 @@ export class UsuarioService {
         id: true,
         nome: true,
         email: true,
+        perfil: true,
         empresa: {
           select: {
             id: true,
@@ -70,6 +73,7 @@ export class UsuarioService {
         id: true,
         nome: true,
         email: true,
+        perfil: true,
         empresa: {
           select: {
             id: true,
@@ -81,11 +85,12 @@ export class UsuarioService {
   }
 
   async update(id: number, data: UpdateUsuarioDto) {
-    const { nome, email, senha } = data;
-    const user = await this.prisma.usuario.update({ where: { id }, data: { nome, email, senha } });
+    const { nome, email, senha, perfil } = data;
+    const user = await this.prisma.usuario.update({ where: { id }, data: { nome, email, perfil, senha } });
     return {
       nome: user.nome,
       email: user.email,
+      perfil: user.perfil,
     }
   }
 
