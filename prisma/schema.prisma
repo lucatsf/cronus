@@ -18,11 +18,18 @@ model Empresa {
   @@map("empresas")
 }
 
+enum EnumPerfil {
+  ADMIN
+  USUARIO
+  ROOT
+}
+
 model Usuario {
   id        Int        @id @default(autoincrement())
   nome      String
   email     String     @unique
   senha     String
+  perfil    EnumPerfil @default(USUARIO)
   empresa   Empresa?   @relation(fields: [empresaId], references: [id])
   empresaId Int?
   Registros  Registro[]
