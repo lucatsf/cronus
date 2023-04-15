@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Req } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Req, Query } from '@nestjs/common';
 import { RegistroService } from './registro.service';
 import { CreateRegistroDto } from './dto/create-registro.dto';
 import { UpdateRegistroDto } from './dto/update-registro.dto';
@@ -19,8 +19,25 @@ export class RegistroController {
   }
 
   @Get()
-  findAll() {
-    return this.registroService.findAll();
+  findAll(
+    @Req() req: any,
+    @Query('page') page: number = 1,
+    @Query('take') take: number = 20,
+    @Query() filtros: {
+      nome?: string;
+      dataInicio?: string;
+      dataFim?: string;
+      usuarioId?: number;
+    } = {}
+  ) {
+    return this.registroService.findAll(
+      page,
+      take,
+      {
+        ...filtros,
+      },
+      req?.user
+    );
   }
 
   @Get(':id')
