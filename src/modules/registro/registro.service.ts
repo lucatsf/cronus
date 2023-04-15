@@ -8,7 +8,17 @@ export class RegistroService {
   constructor(private prisma: PrismaService) {}
 
   async create(data: CreateRegistroDto) {
-    return 'This action adds a new registro';
+    const { entrada, latitude, longitude, usuarioId } = data;
+    const registro = await this.prisma.registro.create({
+      data: {
+        data: new Date(),
+        entrada,
+        latitude,
+        longitude,
+        usuarioId,
+      },
+    });
+    return registro;
   }
 
   async findAll() {

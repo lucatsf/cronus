@@ -1,9 +1,8 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsBoolean, IsDate, IsNotEmpty, IsNumber, IsOptional } from "class-validator";
+import { IsBoolean, IsDate, IsEmpty, IsNotEmpty, IsNumber, IsOptional } from "class-validator";
 
 export class CreateRegistroDto {
-  @IsNotEmpty()
-  @IsDate()
+  @IsEmpty()
   @ApiProperty()
   data: Date;
 
@@ -30,7 +29,7 @@ export class CreateRegistroDto {
   @ApiProperty()
   longitude: number;
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsNumber()
   @ApiProperty()
   usuarioId: number;
