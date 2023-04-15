@@ -11,19 +11,19 @@ export class EmpresaService {
     return this.prisma.empresa.create({ data });
   }
 
-  findAll() {
+  async findAll() {
     return `This action returns all empresa`;
   }
 
-  findOne(id: number) {
+  async findOne(id: number) {
     return this.prisma.empresa.findUnique({ where: { id } });
   }
 
-  update(id: number, data: UpdateEmpresaDto) {
+  async update(id: number, data: UpdateEmpresaDto) {
     return this.prisma.empresa.update({ where: { id }, data });
   }
 
-  remove(id: number) {
+  async remove(id: number) {
     return this.prisma.empresa.delete({ where: { id } });
   }
 }
