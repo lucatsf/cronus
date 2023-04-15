@@ -33,6 +33,7 @@ export class AuthService {
         id: usuario.id,
         nome: usuario.nome,
         email: usuario.email,
+        perfil: usuario.perfil,
         empresa: usuario?.empresa,
       };
     } catch (error) {
@@ -41,12 +42,13 @@ export class AuthService {
   }
 
   async login(user: Usuario) {
-    const payload = { email: user.email, sub: user.id };
+    const payload = { email: user.email, perfil: user.perfil, sub: user.id };
     return {
       usuario: {
         id: user.id,
         nome: user.nome,
         email: user.email,
+        perfil: user.perfil,
         empresa: user?.empresa,
       },
       access_token: this.jwtService.sign(payload),
