@@ -13,18 +13,32 @@ model Empresa {
   cnpj     String    @unique
   telefone String
   email    String
-  Usuario  Usuario[]
+  Usuarios  Usuario[]
 
   @@map("empresas")
 }
 
 model Usuario {
-  id        Int     @id @default(autoincrement())
+  id        Int        @id @default(autoincrement())
   nome      String
-  email     String  @unique
+  email     String     @unique
   senha     String
-  empresa   Empresa? @relation(fields: [empresaId], references: [id])
+  empresa   Empresa?   @relation(fields: [empresaId], references: [id])
   empresaId Int?
+  Registros  Registro[]
 
   @@map("usuarios")
+}
+
+model Registro {
+  id        Int      @id @default(autoincrement())
+  data      DateTime @default(now())
+  entrada   Boolean
+  editado   Boolean  @default(false)
+  latitude  Float?
+  longitude Float?
+  Usuario   Usuario @relation(fields: [usuarioId], references: [id])
+  usuarioId Int
+
+  @@map("registros")
 }
