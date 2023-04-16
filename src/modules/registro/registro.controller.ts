@@ -60,4 +60,14 @@ export class RegistroController {
   remove(@Param('id') id: string) {
     return this.registroService.remove(+id);
   }
+
+  @Get('relatorio/mensal')
+  @UseGuards(PermissionGuard(Role.ADMIN))
+  generateMonthlyReport(
+    @Query('id') id: string,
+    @Query('dataInit') dataInit: string,
+    @Query('dataFim') dataFim: string
+  ) {
+    return this.registroService.generateMonthlyReport(+id, dataInit, dataFim);
+  }
 }

@@ -3,6 +3,7 @@ import { CreateRegistroDto } from './dto/create-registro.dto';
 import { UpdateRegistroDto } from './dto/update-registro.dto';
 import { PrismaService } from 'src/database/PrismaService';
 import { Usuario } from '../usuario/entities/usuario.entity';
+import { endOfDay, startOfDay } from 'date-fns';
 
 @Injectable()
 export class RegistroService {
@@ -132,5 +133,62 @@ export class RegistroService {
         id,
       },
     });
+  }
+
+  async generateMonthlyReport(usuarioId: number, dataInit: string, dataEnd: string) {
+    const inicio = startOfDay(new Date(dataInit));
+    const fim = endOfDay(new Date(dataEnd));
+    const registros = await this.prisma.registro.findMany({
+      where: {
+        data: {
+          gte: inicio,
+          lte: fim,
+        },
+        usuarioId,
+      }
+    });
+
+    const horasTrabalhadasPorDia: { [key: string]: number } = {};
+    let registrosFormatados: any[] = [];
+    let horasTotalMes = 0;
+    let diasTrabalhados = 0;
+    registros.forEach((registro) => {
+      const dataString = registro.data.toLocaleDateString();
+
+      if (!horasTrabalhadasPorDia[dataString]) {
+        horasTrabalhadasPorDia[dataString] = 0;
+        diasTrabalhados++; // incrementa o contador de dias trabalhados
+      }
+      if (registro.entrada) {
+        const proximoRegistro = registros.find(
+          (r) => r.usuarioId === registro.usuarioId && r.data > registro.data && r.entrada === false
+        );
+        if (proximoRegistro) {
+          const diff = proximoRegistro.data.getTime() - registro.data.getTime();
+          horasTrabalhadasPorDia[dataString] += diff / (1000 * 60 * 60);
+        }
+        horasTotalMes += parseFloat(horasTrabalhadasPorDia[dataString].toFixed(2));
+
+        registrosFormatados.push({
+          editado: registro.editado,
+          data: registro.data,
+          horasTrabalhadas: horasTrabalhadasPorDia[dataString],
+        });
+      }
+    });
+
+    const usuario = await this.prisma.usuario.findUnique({ where: { id: usuarioId } });
+    const valorHora = 50.02; //NOTE: valor fixo para teste
+    const aReceber = valorHora * horasTotalMes;
+
+    return {
+      nome: usuario.nome,
+      email: usuario.email,
+      horasTotalMes,
+      diasTrabalhados,
+      valorHora,
+      aReceber,
+      registros: registrosFormatados,
+    };
   }
 }
