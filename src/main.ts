@@ -5,7 +5,7 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-
+  Intl.DateTimeFormat().resolvedOptions().timeZone = 'America/Sao_Paulo';
   const config = new DocumentBuilder()
   .setTitle('Operatio API')
   .setDescription('The operatio API description')
