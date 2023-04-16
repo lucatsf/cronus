@@ -4,7 +4,7 @@ import { Role } from './enums/role.enum';
 const PermissionGuard = (role: Role): Type<CanActivate> => {
   class RoleGuardMixin implements CanActivate {
     canActivate(context: ExecutionContext) {
-      const request = context.switchToHttp().getRequest();console.log(request.user.perfil)
+      const request = context.switchToHttp().getRequest();
       if (role === Role.USUARIO && (request.user.perfil === Role.ROOT) || request.user.perfil === Role.ADMIN) {
         return true;
       }
