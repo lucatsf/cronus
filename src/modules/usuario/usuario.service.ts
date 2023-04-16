@@ -85,8 +85,8 @@ export class UsuarioService {
   }
 
   async update(id: number, data: UpdateUsuarioDto) {
-    const { nome, email, senha, perfil } = data;
-    const user = await this.prisma.usuario.update({ where: { id }, data: { nome, email, perfil, senha } });
+    const { nome, email, senha, perfil, empresaId } = data;
+    const user = await this.prisma.usuario.update({ where: { id }, data: { nome, email, perfil, senha, empresaId } });
     return {
       nome: user.nome,
       email: user.email,
