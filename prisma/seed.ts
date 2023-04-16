@@ -7,7 +7,7 @@ async function main() {
     create: {
       id: 1,
       nome: "Lucas",
-      senha: "Luc@s123",
+      senha: "$2b$10$p/0Ot9.c6GcWixscMVhMgOk9EWN8M5OJtJhPmPd2vepaikegPrHnm",
       email: "lucatsf@icloud.com",
       perfil: "ROOT"
     },
