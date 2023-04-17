@@ -3,7 +3,9 @@ import { CreateRegistroDto } from './dto/create-registro.dto';
 import { UpdateRegistroDto } from './dto/update-registro.dto';
 import { PrismaService } from 'src/database/PrismaService';
 import { Usuario } from '../usuario/entities/usuario.entity';
-import { endOfDay, startOfDay } from 'date-fns';
+import { endOfDay, startOfDay, sub } from 'date-fns';
+import { utcToZonedTime } from 'date-fns-tz';
+
 
 @Injectable()
 export class RegistroService {
@@ -11,15 +13,17 @@ export class RegistroService {
 
   async create(data: CreateRegistroDto) {
     const { entrada, latitude, longitude, usuarioId } = data;
-    const registro = await this.prisma.registro.create({
+    const dataTimezone = utcToZonedTime(new Date(), process.env.TIMEZONE);
+    const dataAjustada = sub(dataTimezone, { hours: parseInt(process.env.TIMEZONE_OFFSET) });
+    const registro = this.prisma.registro.create({
       data: {
-        data: new Date(),
+        data: dataAjustada,
         entrada,
         latitude,
         longitude,
         usuarioId,
       },
-    });
+    })
     return registro;
   }
 
@@ -65,6 +69,9 @@ export class RegistroService {
             },
           },
         },
+        orderBy: {
+          id: 'desc',
+        },
       });
       return {
         registros,
@@ -101,6 +108,9 @@ export class RegistroService {
             nome: true,
           },
         },
+      },
+      orderBy: {
+        id: 'desc',
       },
     });
     return {
@@ -145,7 +155,10 @@ export class RegistroService {
           lte: fim,
         },
         usuarioId,
-      }
+      },
+      orderBy: {
+        data: 'asc',
+      },
     });
 
     const horasTrabalhadasPorDia: { [key: string]: number } = {};
@@ -167,14 +180,14 @@ export class RegistroService {
           const diff = proximoRegistro.data.getTime() - registro.data.getTime();
           horasTrabalhadasPorDia[dataString] += diff / (1000 * 60 * 60);
         }
-        horasTotalMes += parseFloat(horasTrabalhadasPorDia[dataString].toFixed(2));
-
-        registrosFormatados.push({
-          editado: registro.editado,
-          data: registro.data,
-          horasTrabalhadas: horasTrabalhadasPorDia[dataString],
-        });
+        horasTotalMes += parseFloat(horasTrabalhadasPorDia[dataString].toFixed(4));
       }
+      registrosFormatados.push({
+        editado: registro.editado,
+        data: registro.data,
+        entrada: registro.entrada,
+        horasTrabalhadas: horasTrabalhadasPorDia[dataString],
+      });
     });
 
     const usuario = await this.prisma.usuario.findUnique({ where: { id: usuarioId } });
